@@ -1,0 +1,159 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:example/core.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../../../constants.dart';
+import '../controller/profile_controller.dart';
+
+class ProfileView extends StatefulWidget {
+  const ProfileView({
+    Key? key,
+  }) : super(key: key);
+
+  Widget build(context, ProfileController controller) {
+    controller.view = this;
+    File? image;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Profile",
+        ),
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 115,
+              width: 115,
+              child: Stack(
+                fit: StackFit.expand,
+                clipBehavior: Clip.none,
+                children: [
+                  //
+                  image != null
+                      ? Image.file(image)
+                      :
+                      //
+
+                      const CircleAvatar(
+                          backgroundImage:
+                              AssetImage("assets/icon/Profile Image.png"),
+                        ),
+
+                  Positioned(
+                    right: -16,
+                    bottom: 0,
+                    child: SizedBox(
+                      height: 46,
+                      width: 46,
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(100),
+                            side: const BorderSide(color: Colors.white),
+                          ),
+                          backgroundColor: const Color(0xFFF5F6F9),
+                        ),
+                        onPressed: () {
+                          controller.picksImage();
+                          print(controller.image);
+                        },
+                        child: SvgPicture.asset("assets/icon/Camera Icon.svg"),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            ProfileMenu(
+              text: "My Account",
+              icon: "assets/icon/User Icon.svg",
+              press: () {},
+
+              // press: () => {print('Pressed')},
+              // () => print('TextField onTap'),
+            ),
+            ProfileMenu(
+              text: "Notifications",
+              icon: "assets/icon/Bell.svg",
+              press: () async {
+                const String url = "https://www.geeksforgeeks.org";
+              },
+            ),
+            ProfileMenu(
+              text: "Settings",
+              icon: "assets/icon/Settings.svg",
+              press: () {},
+            ),
+            ProfileMenu(
+              text: "Help Center",
+              icon: "assets/icon/Question mark.svg",
+              press: () {},
+            ),
+            ProfileMenu(
+              text: "Log Out",
+              icon: "assets/icon/Log out.svg",
+              press: () => controller.doLogout(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  State<ProfileView> createState() => ProfileController();
+}
+
+class ProfileMenu extends StatelessWidget {
+  const ProfileMenu({
+    Key? key,
+    required this.text,
+    required this.icon,
+    this.press,
+  }) : super(key: key);
+
+  handleButtonClick(BuildContext context) {
+    const snackBar = SnackBar(
+      content: Text("Text Button Clicked!"),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  final String text, icon;
+  final VoidCallback? press;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: TextButton(
+        style: TextButton.styleFrom(
+          foregroundColor: kPrimaryColor,
+          padding: const EdgeInsets.all(20),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          backgroundColor: const Color(0xFFF5F6F9),
+        ),
+        onPressed: press,
+        child: Row(
+          children: [
+            SvgPicture.asset(
+              icon,
+              color: kPrimaryColor,
+              width: 22,
+            ),
+            const SizedBox(width: 20),
+            Expanded(child: Text(text)),
+            const Icon(Icons.arrow_forward_ios),
+          ],
+        ),
+      ),
+    );
+  }
+}
